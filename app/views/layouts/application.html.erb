@@ -1,15 +1,63 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>App</title>
+    <title>CoffeeTumbler</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    
+    <!-- シンプルな左右2カラムのスタイル -->
+    <style>
+      body {
+        display: flex;
+        margin: 0;
+        font-family: sans-serif;
+      }
+      .sidebar {
+        width: 250px;
+        height: 100vh;
+        background-color: #f4f4f4;
+        padding: 20px;
+        box-sizing: border-box;
+        border-right: 1px solid #ddd;
+        overflow-y: auto;
+        position: fixed;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+        flex: 1;
+        box-sizing: border-box;
+      }
+    </style>
   </head>
 
   <body>
-    <%= yield %>
+    <!-- 左端のサイドバー（ユーザー一覧） -->
+    <div class="sidebar">
+      <h3>ユーザー一覧</h3>
+      <p><%= link_to "＋ 新規登録", new_user_path %></p>
+      <ul>
+        <!-- 登録されているユーザーを全員ループして表示 -->
+        <% User.all.each do |user| %>
+          <li>
+            <!-- 各ユーザーの詳細ページへのリンク -->
+            <%= link_to user.name, user_path(user) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <!-- メインの表示エリア -->
+    <div class="main-content">
+      <% if flash[:notice] %>
+        <p style="color: green;"><%= flash[:notice] %></p>
+      <% end %>
+      
+      <%= yield %>
+    </div>
   </body>
 </html>
