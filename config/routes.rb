@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  resources :users
-  
-  # トップページにアクセスしたときにユーザー一覧を表示する
-  root "users#index"
+ resources :tumblers, only: [:show] do
+  member do
+    patch :drink # ボタンを押すと残量を減らすアクション
+  end
 end
