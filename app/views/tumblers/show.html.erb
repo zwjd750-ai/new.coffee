@@ -2,10 +2,10 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Coffee Tumbler App</title>
+  <title>Coffee Tumbler</title>
   <style>
     body {
-      background-color: #fce4ec; /* 画像に合わせた優しいピンク系の背景 */
+      background-color: #fce4ec; /* 優しいピンク系の背景 */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -51,7 +51,7 @@
       z-index: 4;
     }
 
-    /* ストロー（画像に合わせたピンク色） */
+    /* ピンクのストロー */
     .straw {
       position: absolute;
       top: -20px;
@@ -59,7 +59,7 @@
       transform: translateX(-50%);
       width: 14px;
       height: 130px;
-      background-color: #f8bbd0; /* ピンクのストロー */
+      background-color: #f8bbd0;
       border: 2px solid #6b5b55;
       border-radius: 4px;
       z-index: 5;
@@ -86,7 +86,8 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      background: linear-gradient(to bottom, #8d6e63, #5d4037); /* リッチなコーヒーブラウン */
+      height: 100%; /* 初期値：満タン (レベル5) */
+      background: linear-gradient(to bottom, #8d6e63, #5d4037);
       transition: height 0.6s ease-in-out;
       z-index: 1;
     }
@@ -99,7 +100,7 @@
       transform: translate(-50%, -50%);
       width: 50px;
       height: 50px;
-      background-color: #2e7d32; /* 深い緑色の丸 */
+      background-color: #2e7d32;
       border: 2px solid #ffffff;
       border-radius: 50%;
       display: flex;
@@ -114,7 +115,7 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
     }
 
-    /* メモリと数字 */
+    /* 5段階のメモリと数字 */
     .scales {
       position: absolute;
       top: 0;
@@ -131,24 +132,25 @@
       display: flex;
       align-items: center;
       color: #4e342e;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
     }
 
     .scale-item::before {
       content: "";
       display: inline-block;
-      width: 20px;
+      width: 16px;
       height: 2px;
       background-color: #4e342e;
-      margin-right: 6px;
+      margin-right: 4px;
     }
 
-    /* メモリの位置（下からの高さ） */
-    .scale-1 { bottom: 25%; }
-    .scale-2 { bottom: 50%; }
-    .scale-3 { bottom: 75%; }
-    .scale-4 { bottom: 90%; }
+    /* 5段階の高さに合わせたメモリ位置 (1〜5) */
+    .scale-1 { bottom: 20%; }
+    .scale-2 { bottom: 40%; }
+    .scale-3 { bottom: 60%; }
+    .scale-4 { bottom: 80%; }
+    .scale-5 { bottom: 95%; }
 
     /* 操作パネル・メッセージ */
     .panel {
@@ -186,14 +188,15 @@
     <div class="tumbler-rim"></div>
     
     <div class="tumbler-body">
-      <!-- ログインの度に高さが変わるコーヒー部分 (level 3 = 75%) -->
-      <div id="coffee" class="coffee-liquid" style="height: 75%;"></div>
+      <!-- コーヒーの液面 (初期値 5 = 100%) -->
+      <div id="coffee" class="coffee-liquid" style="height: 100%;"></div>
 
       <!-- 中央の緑のRロゴ -->
       <div class="tumbler-logo">R</div>
 
-      <!-- メモリ (1〜4) -->
+      <!-- 5段階メモリ (1〜5) -->
       <div class="scales">
+        <div class="scale-item scale-5">5</div>
         <div class="scale-item scale-4">4</div>
         <div class="scale-item scale-3">3</div>
         <div class="scale-item scale-2">2</div>
@@ -203,28 +206,28 @@
   </div>
 
   <div class="panel">
-    <p id="message">現在の残りレベル: <span id="level-val">3</span></p>
-    <!-- Rails実装時は、これがログインコントローラーの処理やセッションに繋がります -->
+    <p id="message">現在の残りレベル: <span id="level-val">5</span></p>
+    <!-- テスト用ボタン (Rails実装時は実際のログイン処理・カウントダウンに置き換えます) -->
     <button onclick="simulateLogin()">ログインして飲む（1メモリ減らす）</button>
   </div>
 
   <script>
-    // 動作確認用の変数（RailsのDB値やセッションに置き換えて使えます）
-    let currentLevel = 3;
+    // 動作確認用（初期値は満タンの5）
+    let currentLevel = 5;
 
     function simulateLogin() {
       if (currentLevel > 0) {
         currentLevel--;
       } else {
-        currentLevel = 4; // 0になったら満タンに戻すループ
+        currentLevel = 5; // 0になったら満タン（5）に戻るループ
       }
 
       const coffee = document.getElementById('coffee');
       const levelVal = document.getElementById('level-val');
       const message = document.getElementById('message');
 
-      // レベルに応じた液体の高さ（4=100%, 3=75%, 2=50%, 1=25%, 0=0%）
-      const heights = { 4: '100%', 3: '75%', 2: '50%', 1: '25%', 0: '0%' };
+      // 5段階の高さ設定 (5=100%, 4=80%, 3=60%, 2=40%, 1=20%, 0=0%)
+      const heights = { 5: '100%', 4: '80%', 3: '60%', 2: '40%', 1: '20%', 0: '0%' };
 
       coffee.style.height = heights[currentLevel];
       levelVal.textContent = currentLevel;
